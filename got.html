@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Game of Thrones Family Trees</title>
+    <!-- Include Viz.js from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/viz.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viz.js/2.1.2/full.render.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .graph-container {
+            margin-bottom: 50px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .graph {
+            text-align: center;
+            margin-top: 20px;
+        }
+        svg {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Game of Thrones Family Trees (Season 1)</h1>
+
+<div class="graph-container">
+    <h2>Stark and Tully Family Tree</h2>
+    <div id="stark_tully" class="graph"></div>
+</div>
+
+<div class="graph-container">
+    <h2>Lannister and Baratheon Family Tree</h2>
+    <div id="lannister_baratheon" class="graph"></div>
+</div>
+
+<div class="graph-container">
+    <h2>House Targaryen</h2>
+    <div id="targaryen" class="graph"></div>
+</div>
+
+<script>
+    // Define colors for each family
+    var familyColors = {
+        "Stark": "#ADD8E6",       // Light Blue
+        "Tully": "#90EE90",       // Light Green
+        "Arryn": "#E6E6FA",       // Lavender
+        "Baratheon": "#FFFACD",   // Lemon Chiffon
+        "Lannister": "#FFC0CB",   // Pink
+        "Targaryen": "#DDA0DD",   // Plum
+        "Other": "#FFFFFF"        // White for others
+    };
+
+    // Stark and Tully Family Tree DOT code
+    var starkTullyDot = `
+    digraph StarkTullyFamilyTree {
+        rankdir=TB;
+        node [shape=box, style=filled];
+        edge [dir=none];
+
+        // Hoster Tully and his wife
+        {
+            rank=same;
+            "Hoster Tully";
+            "Unknown Tully Mother";
+        }
+        "Hoster Tully" [fillcolor="${familyColors['Tully']}"];
+        "Unknown Tully Mother" [label="Unknown Mother", style=filled, fillcolor="#E5E5E5", fontcolor="#888888"];
+        "Hoster Tully" -> "Unknown Tully Mother" [style=invis];
+
+        // Marriage node
+        "Hoster_Marriage" [shape=circle, label="", width=0.1];
+        "Hoster Tully" -> "Hoster_Marriage";
+        "Unknown Tully Mother" -> "Hoster_Marriage";
+        // Children
+        "Catelyn Tully" [fillcolor="${familyColors['Tully']}"];
+        "Lysa Tully" [fillcolor="${familyColors['Tully']}"];
+        "Edmure Tully" [fillcolor="${familyColors['Tully']}"];
+        "Hoster_Marriage" -> { "Catelyn Tully"; "Lysa Tully"; "Edmure Tully" };
+
+        // Rickard Stark and his wife
+        {
+            rank=same;
+            "Rickard Stark";
+            "Unknown Stark Mother";
+        }
+        "Rickard Stark" [fillcolor="${familyColors['Stark']}"];
+        "Unknown Stark Mother" [label="Unknown Mother", style=filled, fillcolor="#E5E5E5", fontcolor="#888888"];
+        "Rickard Stark" -> "Unknown Stark Mother" [style=invis];
+
+        // Marriage node
+        "Rickard_Marriage" [shape=circle, label="", width=0.1];
+        "Rickard Stark" -> "Rickard_Marriage";
+        "Unknown Stark Mother" -> "Rickard_Marriage";
+        // Children
+        "Eddard Stark" [fillcolor="${familyColors['Stark']}"];
+        "Benjen Stark" [fillcolor="${familyColors['Stark']}"];
+        "Brandon Stark" [fillcolor="${familyColors['Stark']}", label="Brandon Stark (deceased)", fontcolor="#888888"];
+        "Lyanna Stark" [fillcolor="${familyColors['Stark']}", label="Lyanna Stark (deceased)", fontcolor="#888888"];
+        "Rickard_Marriage" -> { "Brandon Stark"; "Eddard Stark"; "Lyanna Stark"; "Benjen Stark" };
+
+        // Marriage between Eddard Stark and Catelyn Tully
+        {
+            rank=same;
+            "Catelyn Tully";
+            "Eddard Stark";
+        }
+        "Catelyn Tully" -> "Eddard Stark" [style=invis];
+
+        // Marriage node
+        "Eddard_Catelyn" [shape=circle, label="", width=0.1];
+        "Catelyn Tully" -> "Eddard_Catelyn";
+        "Eddard Stark" -> "Eddard_Catelyn";
+        // Children
+        "Robb Stark" [fillcolor="${familyColors['Stark']}"];
+        "Sansa Stark" [fillcolor="${familyColors['Stark']}"];
+        "Arya Stark" [fillcolor="${familyColors['Stark']}"];
+        "Bran Stark" [fillcolor="${familyColors['Stark']}"];
+        "Rickon Stark" [fillcolor="${familyColors['Stark']}"];
+        "Eddard_Catelyn" -> { "Robb Stark"; "Sansa Stark"; "Arya Stark"; "Bran Stark"; "Rickon Stark" };
+
+        // Jon Snow's parentage
+        {
+            rank=same;
+            "Unknown Mother of Jon Snow";
+            "Eddard Stark";
+        }
+        "Unknown Mother of Jon Snow" [label="Unknown Mother", style=filled, fillcolor="#E5E5E5", fontcolor="#888888"];
+        "Eddard_Unknown" [shape=circle, label="", width=0.1];
+        "Unknown Mother of Jon Snow" -> "Eddard_Unknown" [style=dashed];
+        "Eddard Stark" -> "Eddard_Unknown" [style=dashed];
+        "Jon Snow" [fillcolor="${familyColors['Stark']}"];
+        "Eddard_Unknown" -> "Jon Snow" [style=dashed, label="bastard"];
+
+        // Lysa Tully's marriage to Jon Arryn
+        {
+            rank=same;
+            "Jon Arryn";
+            "Lysa Tully";
+        }
+        "Jon Arryn" [fillcolor="${familyColors['Arryn']}", label="Jon Arryn (deceased)", fontcolor="#888888"];
+        "Jon Arryn" -> "Lysa Tully" [style=invis];
+
+        // Marriage node
+        "Lysa_Jon" [shape=circle, label="", width=0.1];
+        "Jon Arryn" -> "Lysa_Jon";
+        "Lysa Tully" -> "Lysa_Jon";
+        // Child
+        "Robin Arryn" [fillcolor="${familyColors['Arryn']}"];
+        "Lysa_Jon" -> "Robin Arryn";
+    }
+    `;
+
+    // Lannister and Baratheon Family Tree DOT code
+    var lannisterBaratheonDot = `
+    digraph LannisterBaratheonFamilyTree {
+        rankdir=TB;
+        node [shape=box, style=filled];
+        edge [dir=none];
+
+        // Steffon Baratheon and Cassana Estermont
+        {
+            rank=same;
+            "Steffon Baratheon";
+            "Cassana Estermont";
+        }
+        "Steffon Baratheon" [fillcolor="${familyColors['Baratheon']}"];
+        "Cassana Estermont" [fillcolor="${familyColors['Other']}"];
+        "Steffon Baratheon" -> "Cassana Estermont" [style=invis];
+
+        // Marriage node
+        "Steffon_Cassana" [shape=circle, label="", width=0.1];
+        "Steffon Baratheon" -> "Steffon_Cassana";
+        "Cassana Estermont" -> "Steffon_Cassana";
+        // Children
+        "Robert Baratheon" [fillcolor="${familyColors['Baratheon']}"];
+        "Stannis Baratheon" [fillcolor="${familyColors['Baratheon']}"];
+        "Renly Baratheon" [fillcolor="${familyColors['Baratheon']}"];
+        "Steffon_Cassana" -> { "Robert Baratheon"; "Stannis Baratheon"; "Renly Baratheon" };
+
+        // Tywin Lannister and Joanna Lannister
+        {
+            rank=same;
+            "Tywin Lannister";
+            "Joanna Lannister";
+        }
+        "Tywin Lannister" [fillcolor="${familyColors['Lannister']}"];
+        "Joanna Lannister" [label="Joanna Lannister (deceased)", fillcolor="${familyColors['Lannister']}", fontcolor="#888888"];
+        "Tywin Lannister" -> "Joanna Lannister" [style=invis];
+
+        // Marriage node
+        "Tywin_Joanna" [shape=circle, label="", width=0.1];
+        "Tywin Lannister" -> "Tywin_Joanna";
+        "Joanna Lannister" -> "Tywin_Joanna";
+        // Children
+        "Cersei Lannister" [fillcolor="${familyColors['Lannister']}"];
+        "Jaime Lannister" [fillcolor="${familyColors['Lannister']}"];
+        "Tyrion Lannister" [fillcolor="${familyColors['Lannister']}"];
+        "Tywin_Joanna" -> { "Cersei Lannister"; "Jaime Lannister"; "Tyrion Lannister" };
+
+        // Marriage between Robert Baratheon and Cersei Lannister
+        {
+            rank=same;
+            "Robert Baratheon";
+            "Cersei Lannister";
+        }
+        "Robert Baratheon" -> "Cersei Lannister" [style=invis];
+
+        // Marriage node
+        "Robert_Cersei" [shape=circle, label="", width=0.1];
+        "Robert Baratheon" -> "Robert_Cersei";
+        "Cersei Lannister" -> "Robert_Cersei";
+        // Children (official)
+        "Joffrey Baratheon" [fillcolor="${familyColors['Baratheon']}"];
+        "Myrcella Baratheon" [fillcolor="${familyColors['Baratheon']}"];
+        "Tommen Baratheon" [fillcolor="${familyColors['Baratheon']}"];
+        "Robert_Cersei" -> { "Joffrey Baratheon"; "Myrcella Baratheon"; "Tommen Baratheon" };
+
+        // Secret relationship between Cersei and Jaime
+        {
+            rank=same;
+            "Cersei Lannister";
+            "Jaime Lannister";
+        }
+        "Cersei Lannister" -> "Jaime Lannister" [style=invis];
+
+        // Secret relationship node
+        "Cersei_Jaime" [shape=circle, label="", width=0.1];
+        "Cersei Lannister" -> "Cersei_Jaime" [style=dashed];
+        "Jaime Lannister" -> "Cersei_Jaime" [style=dashed];
+        // Children (true parentage)
+        "Cersei_Jaime" -> { "Joffrey Baratheon"; "Myrcella Baratheon"; "Tommen Baratheon" } [style=dashed];
+
+        // Robert's bastard
+        "Unknown Mother of Gendry" [label="Unknown Mother", style=filled, fillcolor="#E5E5E5", fontcolor="#888888"];
+        {
+            rank=same;
+            "Unknown Mother of Gendry";
+            "Robert Baratheon";
+        }
+        "Unknown Mother of Gendry" -> "Robert Baratheon" [style=invis];
+
+        // Relationship node
+        "Robert_Unknown" [shape=circle, label="", width=0.1];
+        "Unknown Mother of Gendry" -> "Robert_Unknown" [style=dashed];
+        "Robert Baratheon" -> "Robert_Unknown" [style=dashed];
+        "Gendry" [label="Gendry (bastard son)", fillcolor="${familyColors['Baratheon']}"];
+        "Robert_Unknown" -> "Gendry" [style=dashed, label="bastard"];
+    }
+    `;
+
+    // House Targaryen DOT code (updated with proper escaping)
+    var targaryenDot = `
+    digraph TargaryenFamilyTree {
+        rankdir=TB;
+        node [shape=box, style=filled];
+        edge [dir=none];
+
+        // Parents at the same level
+        {
+            rank=same;
+            "Aerys II Targaryen (Mad King)";
+            "Rhaella Targaryen";
+        }
+        "Aerys II Targaryen (Mad King)" [fillcolor="${familyColors['Targaryen']}", fontcolor="#888888"];
+        "Rhaella Targaryen" [label="Rhaella Targaryen (deceased)", fillcolor="${familyColors['Targaryen']}", fontcolor="#888888"];
+        "Aerys II Targaryen (Mad King)" -> "Rhaella Targaryen" [style=invis];
+
+        // Marriage node
+        "Aerys_Rhaella" [shape=circle, label="", width=0.1];
+        "Aerys II Targaryen (Mad King)" -> "Aerys_Rhaella";
+        "Rhaella Targaryen" -> "Aerys_Rhaella";
+        // Children
+        "Rhaegar Targaryen" [label="Rhaegar Targaryen (deceased)", fillcolor="${familyColors['Targaryen']}", fontcolor="#888888"];
+        "Viserys Targaryen" [label="Viserys Targaryen (deceased)", fillcolor="${familyColors['Targaryen']}", fontcolor="#888888"];
+        "Daenerys Targaryen" [fillcolor="${familyColors['Targaryen']}"];
+        "Aerys_Rhaella" -> { "Rhaegar Targaryen"; "Viserys Targaryen"; "Daenerys Targaryen" };
+
+        // Daenerys and Khal Drogo at the same level
+        {
+            rank=same;
+            "Daenerys Targaryen";
+            "Khal Drogo";
+        }
+        "Daenerys Targaryen" -> "Khal Drogo" [style=invis];
+
+        // Marriage node
+        "Daenerys_Drogo" [shape=circle, label="", width=0.1];
+        "Daenerys Targaryen" -> "Daenerys_Drogo" [label="married"];
+        "Khal Drogo" [label="Khal Drogo (deceased)", style=filled, fillcolor="#F5CBA7", fontcolor="#888888"];
+        "Khal Drogo" -> "Daenerys_Drogo";
+        "Rhaego" [label="Rhaego (stillborn)", style=filled, fillcolor="#E5E5E5", fontcolor="#888888"];
+        "Daenerys_Drogo" -> "Rhaego" [style=dashed];
+    }
+    `;
+
+    // Function to render a graph
+    function renderGraph(dotCode, elementId) {
+        var viz = new Viz();
+        viz.renderSVGElement(dotCode)
+            .then(function(element) {
+                document.getElementById(elementId).appendChild(element);
+            })
+            .catch(error => {
+                console.error("Error rendering graph:", error);
+            });
+    }
+
+    // Render all graphs
+    renderGraph(starkTullyDot, 'stark_tully');
+    renderGraph(lannisterBaratheonDot, 'lannister_baratheon');
+    renderGraph(targaryenDot, 'targaryen');
+</script>
+
+</body>
+</html>
