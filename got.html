@@ -28,21 +28,16 @@
 </head>
 <body>
 
-<h1>Game of Thrones Family Trees (Season 1)</h1>
+<h1>Game of Thrones Family Trees</h1>
 
 <div class="graph-container">
-    <h2>Stark and Tully Family Tree</h2>
-    <div id="stark_tully" class="graph"></div>
+    <h2>Merged Stark, Tully, and Targaryen Family Tree</h2>
+    <div id="merged_tree" class="graph"></div>
 </div>
 
 <div class="graph-container">
     <h2>Lannister and Baratheon Family Tree</h2>
     <div id="lannister_baratheon" class="graph"></div>
-</div>
-
-<div class="graph-container">
-    <h2>House Targaryen</h2>
-    <div id="targaryen" class="graph"></div>
 </div>
 
 <script>
@@ -54,12 +49,12 @@
         "Baratheon": "#FFFACD",   // Lemon Chiffon
         "Lannister": "#FFC0CB",   // Pink
         "Targaryen": "#DDA0DD",   // Plum
-        "Other": "#FFFFFF"        // White for others
+        "Other": "#F5CBA7"        // Sandy Brown for others
     };
 
-    // Stark and Tully Family Tree DOT code
-    var starkTullyDot = `
-    digraph StarkTullyFamilyTree {
+    // Merged Stark, Tully, and Targaryen Family Tree DOT code
+    var mergedTreeDot = `
+    digraph MergedFamilyTree {
         rankdir=TB;
         node [shape=box, style=filled];
         edge [dir=none];
@@ -71,7 +66,7 @@
             "Unknown Tully Mother";
         }
         "Hoster Tully" [fillcolor="${familyColors['Tully']}"];
-        "Unknown Tully Mother" [label="Unknown Mother", style=filled, fillcolor="#E5E5E5", fontcolor="#888888"];
+        "Unknown Tully Mother" [label="Unknown Mother", fillcolor="#E5E5E5", fontcolor="#888888"];
         "Hoster Tully" -> "Unknown Tully Mother" [style=invis];
 
         // Marriage node
@@ -91,7 +86,7 @@
             "Unknown Stark Mother";
         }
         "Rickard Stark" [fillcolor="${familyColors['Stark']}"];
-        "Unknown Stark Mother" [label="Unknown Mother", style=filled, fillcolor="#E5E5E5", fontcolor="#888888"];
+        "Unknown Stark Mother" [label="Unknown Mother", fillcolor="#E5E5E5", fontcolor="#888888"];
         "Rickard Stark" -> "Unknown Stark Mother" [style=invis];
 
         // Marriage node
@@ -99,11 +94,31 @@
         "Rickard Stark" -> "Rickard_Marriage";
         "Unknown Stark Mother" -> "Rickard_Marriage";
         // Children
-        "Eddard Stark" [fillcolor="${familyColors['Stark']}"];
-        "Benjen Stark" [fillcolor="${familyColors['Stark']}"];
         "Brandon Stark" [fillcolor="${familyColors['Stark']}", label="Brandon Stark (deceased)", fontcolor="#888888"];
+        "Eddard Stark" [fillcolor="${familyColors['Stark']}"];
         "Lyanna Stark" [fillcolor="${familyColors['Stark']}", label="Lyanna Stark (deceased)", fontcolor="#888888"];
+        "Benjen Stark" [fillcolor="${familyColors['Stark']}"];
         "Rickard_Marriage" -> { "Brandon Stark"; "Eddard Stark"; "Lyanna Stark"; "Benjen Stark" };
+
+        // Aerys II Targaryen and Rhaella Targaryen
+        {
+            rank=same;
+            "Aerys II Targaryen";
+            "Rhaella Targaryen";
+        }
+        "Aerys II Targaryen" [fillcolor="${familyColors['Targaryen']}", label="Aerys II Targaryen (deceased)", fontcolor="#888888"];
+        "Rhaella Targaryen" [fillcolor="${familyColors['Targaryen']}", label="Rhaella Targaryen (deceased)", fontcolor="#888888"];
+        "Aerys II Targaryen" -> "Rhaella Targaryen" [style=invis];
+
+        // Marriage node
+        "Aerys_Rhaella" [shape=circle, label="", width=0.1];
+        "Aerys II Targaryen" -> "Aerys_Rhaella";
+        "Rhaella Targaryen" -> "Aerys_Rhaella";
+        // Children
+        "Rhaegar Targaryen" [fillcolor="${familyColors['Targaryen']}", label="Rhaegar Targaryen (deceased)", fontcolor="#888888"];
+        "Viserys Targaryen" [fillcolor="${familyColors['Targaryen']}", label="Viserys Targaryen (deceased)", fontcolor="#888888"];
+        "Daenerys Targaryen" [fillcolor="${familyColors['Targaryen']}"];
+        "Aerys_Rhaella" -> { "Rhaegar Targaryen"; "Viserys Targaryen"; "Daenerys Targaryen" };
 
         // Marriage between Eddard Stark and Catelyn Tully
         {
@@ -125,18 +140,38 @@
         "Rickon Stark" [fillcolor="${familyColors['Stark']}"];
         "Eddard_Catelyn" -> { "Robb Stark"; "Sansa Stark"; "Arya Stark"; "Bran Stark"; "Rickon Stark" };
 
-        // Jon Snow's parentage
+        // Jon Snow's true parentage
         {
             rank=same;
-            "Unknown Mother of Jon Snow";
-            "Eddard Stark";
+            "Lyanna Stark";
+            "Rhaegar Targaryen";
         }
-        "Unknown Mother of Jon Snow" [label="Unknown Mother", style=filled, fillcolor="#E5E5E5", fontcolor="#888888"];
-        "Eddard_Unknown" [shape=circle, label="", width=0.1];
-        "Unknown Mother of Jon Snow" -> "Eddard_Unknown" [style=dashed];
-        "Eddard Stark" -> "Eddard_Unknown" [style=dashed];
-        "Jon Snow" [fillcolor="${familyColors['Stark']}"];
-        "Eddard_Unknown" -> "Jon Snow" [style=dashed, label="bastard"];
+        "Lyanna Stark" -> "Rhaegar Targaryen" [style=invis];
+
+        // Marriage node
+        "Rhaegar_Lyanna" [shape=circle, label="", width=0.1];
+        "Lyanna Stark" -> "Rhaegar_Lyanna";
+        "Rhaegar Targaryen" -> "Rhaegar_Lyanna";
+        // Child
+        "Jon Snow" [fillcolor="${familyColors['Targaryen']}"];
+        "Rhaegar_Lyanna" -> "Jon Snow";
+
+        // Daenerys Targaryen and Khal Drogo
+        {
+            rank=same;
+            "Daenerys Targaryen";
+            "Khal Drogo";
+        }
+        "Khal Drogo" [label="Khal Drogo (deceased)", fillcolor="${familyColors['Other']}", fontcolor="#888888"];
+        "Daenerys Targaryen" -> "Khal Drogo" [style=invis];
+
+        // Marriage node
+        "Daenerys_Drogo" [shape=circle, label="", width=0.1];
+        "Daenerys Targaryen" -> "Daenerys_Drogo";
+        "Khal Drogo" -> "Daenerys_Drogo";
+        // Child
+        "Rhaego" [label="Rhaego (stillborn)", fillcolor="#E5E5E5", fontcolor="#888888"];
+        "Daenerys_Drogo" -> "Rhaego" [style=dashed];
 
         // Lysa Tully's marriage to Jon Arryn
         {
@@ -238,7 +273,7 @@
         "Cersei_Jaime" -> { "Joffrey Baratheon"; "Myrcella Baratheon"; "Tommen Baratheon" } [style=dashed];
 
         // Robert's bastard
-        "Unknown Mother of Gendry" [label="Unknown Mother", style=filled, fillcolor="#E5E5E5", fontcolor="#888888"];
+        "Unknown Mother of Gendry" [label="Unknown Mother", fillcolor="#E5E5E5", fontcolor="#888888"];
         {
             rank=same;
             "Unknown Mother of Gendry";
@@ -255,51 +290,6 @@
     }
     `;
 
-    // House Targaryen DOT code (updated with proper escaping)
-    var targaryenDot = `
-    digraph TargaryenFamilyTree {
-        rankdir=TB;
-        node [shape=box, style=filled];
-        edge [dir=none];
-
-        // Parents at the same level
-        {
-            rank=same;
-            "Aerys II Targaryen (Mad King)";
-            "Rhaella Targaryen";
-        }
-        "Aerys II Targaryen (Mad King)" [fillcolor="${familyColors['Targaryen']}", fontcolor="#888888"];
-        "Rhaella Targaryen" [label="Rhaella Targaryen (deceased)", fillcolor="${familyColors['Targaryen']}", fontcolor="#888888"];
-        "Aerys II Targaryen (Mad King)" -> "Rhaella Targaryen" [style=invis];
-
-        // Marriage node
-        "Aerys_Rhaella" [shape=circle, label="", width=0.1];
-        "Aerys II Targaryen (Mad King)" -> "Aerys_Rhaella";
-        "Rhaella Targaryen" -> "Aerys_Rhaella";
-        // Children
-        "Rhaegar Targaryen" [label="Rhaegar Targaryen (deceased)", fillcolor="${familyColors['Targaryen']}", fontcolor="#888888"];
-        "Viserys Targaryen" [label="Viserys Targaryen (deceased)", fillcolor="${familyColors['Targaryen']}", fontcolor="#888888"];
-        "Daenerys Targaryen" [fillcolor="${familyColors['Targaryen']}"];
-        "Aerys_Rhaella" -> { "Rhaegar Targaryen"; "Viserys Targaryen"; "Daenerys Targaryen" };
-
-        // Daenerys and Khal Drogo at the same level
-        {
-            rank=same;
-            "Daenerys Targaryen";
-            "Khal Drogo";
-        }
-        "Daenerys Targaryen" -> "Khal Drogo" [style=invis];
-
-        // Marriage node
-        "Daenerys_Drogo" [shape=circle, label="", width=0.1];
-        "Daenerys Targaryen" -> "Daenerys_Drogo" [label="married"];
-        "Khal Drogo" [label="Khal Drogo (deceased)", style=filled, fillcolor="#F5CBA7", fontcolor="#888888"];
-        "Khal Drogo" -> "Daenerys_Drogo";
-        "Rhaego" [label="Rhaego (stillborn)", style=filled, fillcolor="#E5E5E5", fontcolor="#888888"];
-        "Daenerys_Drogo" -> "Rhaego" [style=dashed];
-    }
-    `;
-
     // Function to render a graph
     function renderGraph(dotCode, elementId) {
         var viz = new Viz();
@@ -313,9 +303,8 @@
     }
 
     // Render all graphs
-    renderGraph(starkTullyDot, 'stark_tully');
+    renderGraph(mergedTreeDot, 'merged_tree');
     renderGraph(lannisterBaratheonDot, 'lannister_baratheon');
-    renderGraph(targaryenDot, 'targaryen');
 </script>
 
 </body>
